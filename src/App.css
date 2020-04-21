@@ -1,0 +1,57 @@
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.devices {
+    display: flex;
+    flex-wrap: wrap;
+}
+.device {
+    width: 280px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 2px;
+    margin: 4px 16px;
+    padding: 16px;
+    background-color: #F0F0F0;
+    position: relative;
+    cursor: pointer;
+}
+.name {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 0;
+}
+.time {
+    color: rgba(0,0,0,0.9);
+    font-size: 0.9em;
+    margin: 0;
+}
+.light {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    background: black;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+.light-on {
+    background: #44f;
+}
+.stop-btn {
+    display: block;
+    margin: 16px auto;
+    background-color: red;
+    color: white;
+    font-size: 1.4em;
+    padding: 8px;
+    border: 1px solid rgba(0,0,0,0.4);
+    width: 300px;
+}
+
+.AppBlock-LocoSet-content label {
+    display: flex;
+}
+
+.AppBlock-LocoSet-content label span {
+    flex: 1;
+}
