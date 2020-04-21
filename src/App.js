@@ -5,13 +5,15 @@ import StatementBlock from "./BlocksUI/StatementBlock";
 
 const API_ROOT = `http://rail_master:8080`;
 
+const SAVE_KEY = "digital-train-saved-blocks";
+
 export default () => {
   const [ devices, setDevices ] = React.useState([]);
   const [ freq, setFreq ] = React.useState(20);
   const [ debug, setDebug ] = React.useState(true);
   const [ command, setCommand ] = React.useState("");
   const [ brightness, setBrightness ] = React.useState(1000);
-  const [ blocks, setBlocks ] = React.useState([ { id: "setup", type: "once" }, { id:"loop", type: "forever" } ]);
+  const [ blocks, setBlocks ] = useSavedState(SAVE_KEY, [ { id: "setup", type: "once" }, { id:"loop", type: "forever" } ]);
   const context = React.useRef({ running: false, getRunner });
   
   async function fetchStatus () {
@@ -194,4 +196,20 @@ function LocoSetContent ({ block, devices, updateBlock }) {
       <label><span>Value: </span><input value={value} onChange={e => setValue(e.target.value)} onBlur={() => updateBlock({ value })}/></label>
     </div>
   );
+}
+
+function useSavedState (key, initialState) {
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    try {
+      initialState = JSON.parse(saved);
+    } catch (e) {}
+  }
+
+  const [ state, setState ] = React.useState(initialState);
+
+  return [ state, newState => {
+    localStorage.setItem(key, JSON.stringify(newState));
+    setState(newState);
+  }];
 }
