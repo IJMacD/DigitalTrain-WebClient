@@ -1,4 +1,7 @@
 import React from "react";
+import Diagram from './BlocksUI/Diagram';
+import execute from "./blocks";
+import StatementBlock from "./BlocksUI/StatementBlock";
 
 const API_ROOT = `http://rail_master:8080`;
 
@@ -8,6 +11,8 @@ export default () => {
   const [ debug, setDebug ] = React.useState(true);
   const [ command, setCommand ] = React.useState("");
   const [ brightness, setBrightness ] = React.useState(1000);
+  const [ blocks, setBlocks ] = React.useState([ { id: "setup", type: "once" }, { id:"loop", type: "forever" } ]);
+  const context = React.useRef({ running: false, getRunner });
   
   async function fetchStatus () {
     const r = await fetch(API_ROOT + "/status");
@@ -110,6 +115,29 @@ export default () => {
     return () => document.removeEventListener("keypress", listener);
   }, [devices, freq]);
 
+  function updateBlock (block, newBlock) {
+    // Not immutable
+    Object.assign(block, newBlock);
+    setBlocks(blocks);
+  }
+
+  function getRunner (block) {
+    if (block.type === "loco-set") {
+      return block => sendDeviceProp(block.device, block.prop, block.value);
+    }
+  }
+
+  /**
+   * 
+   * @param {Block} block 
+   * @returns {React.ReactElement}
+   */
+  function makeBlock (block) {
+    if (block.type === "loco-set") {
+      return <StatementBlock block={block} snapPoints={[{ type: "append", bottom: 0 }]} content={<LocoSetContent devices={devices} block={block} updateBlock={newBlock => updateBlock(block, newBlock)}  />} />;
+    }
+  }
+
   return (
     <>
       <button className="stop-btn" onClick={allStop}>STOP</button>
@@ -123,6 +151,9 @@ export default () => {
         <input value={command} onChange={e => setCommand(e.target.value)} style={{width:300}} />
         <button>Send</button>
       </form>
+      <button onClick={() => { context.current.running = true; execute(blocks, context.current); }}>Run</button>
+      <button onClick={() => context.current.running = false }>Stop</button>
+      <Diagram blocks={blocks} setBlocks={setBlocks} makeBlock={makeBlock} />
     </>
   );
 };
@@ -148,6 +179,19 @@ function Device ({ device, setSpeed, setLight }) {
       />
       <button onClick={e => { e.stopPropagation(); setSpeed(device.name, Math.min(1000, +device.speed + 100)); }}>&gt;</button>
       <div className={`light light-${device.light?"on":"off"}`} />
+    </div>
+  );
+}
+
+function LocoSetContent ({ block, devices, updateBlock }) {
+  const [ prop, setProp ] = React.useState(block.prop||"");
+  const [ value, setValue ] = React.useState(block.value||"");
+  return (
+    <div className="AppBlock-LocoSet-content">
+      <p>Set Loco Property</p>
+      <label><span>Device: </span><select value={block.device||""} onChange={e => updateBlock({ device: e.target.value })}><option />{devices.map(d => <option key={d.name} value={d.name}>{d.name}</option>)}</select></label>
+      <label><span>Property: </span><input value={prop} onChange={e => setProp(e.target.value)} onBlur={() => updateBlock({ prop })}/></label>
+      <label><span>Value: </span><input value={value} onChange={e => setValue(e.target.value)} onBlur={() => updateBlock({ value })}/></label>
     </div>
   );
 }

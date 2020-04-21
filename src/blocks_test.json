@@ -1,0 +1,70 @@
+[
+    {
+      "id": "setup",
+      "type": "once",
+      "children": [
+        {
+          "type": "loco-set",
+          "id": "4bk816d",
+          "device": "B101DC",
+          "prop": "speed",
+          "value": "100"
+        },
+        {
+          "type": "sleep",
+          "value": 1000,
+          "id": "2lpqdz2"
+        },
+        {
+          "type": "sleep",
+          "value": 1000,
+          "id": "2v1ws0r"
+        },
+        {
+          "type": "loco-set",
+          "id": "16fsch",
+          "device": "B101DC",
+          "prop": "speed",
+          "value": "0"
+        }
+      ],
+      "position": {
+        "x": 40,
+        "y": 25
+      }
+    },
+    {
+      "id": "loop",
+      "type": "forever",
+      "position": {
+        "x": 389,
+        "y": 24
+      },
+      "children": [
+        {
+          "id": "2342134",
+          "type": "loco-set",
+          "device": "B101DC",
+          "prop": "light",
+          "value": "on"
+        },
+        {
+          "type": "sleep",
+          "value": 1000,
+          "id": "3hnagwe"
+        },
+        {
+          "type": "loco-set",
+          "id": "28d76sg",
+          "device": "B101DC",
+          "prop": "light",
+          "value": "off"
+        },
+        {
+          "type": "sleep",
+          "value": 1000,
+          "id": "2eypcb9"
+        }
+      ]
+    }
+  ]

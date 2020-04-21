@@ -1,0 +1,56 @@
+[
+    {
+        "id": "o2135v5748",
+        "type": "once",
+        "position": {
+            "x": 20,
+            "y": 30
+        },
+        "children": []
+    },
+    {
+        "id": "qvbo2458",
+        "type": "forever",
+        "position": {
+            "x": 340,
+            "y": 30
+        },
+        "children": [
+            {
+                "id": "e4n76vb35",
+                "type": "output",
+                "label": "Alert",
+                "target": "alert",
+                "value": "one"
+            },
+            {
+                "id": "vb2v5vi345",
+                "type": "output",
+                "label": "Log",
+                "target": "console",
+                "value": "two"
+            },
+            {
+                "id": "vbi21v5345",
+                "type": "loop",
+                "count": 2,
+                "children": [
+                    {
+                        "id": "252v5on8",
+                        "type": "output",
+                        "label": "Log",
+                        "target": "console",
+                        "value": "three"
+                    },
+                    {
+                        "id": "25029857on8",
+                        "type": "action",
+                        "action": "sleep",
+                        "label": "Sleep",
+                        "value": 1000
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,27 @@
+.FlowBlock {
+    background-image: url(./img/flow-top.png), url(./img/flow-bottom.png), url(./img/flow-bg.png);
+    background-repeat: no-repeat, no-repeat, repeat-y;
+    background-position: 0 0, 0 100%, 0 0;
+    background-clip: border-box, border-box, content-box;
+    min-height: 60px;
+    width: 292px;
+    padding: 88px 0 77px;
+    color: white;
+    margin-bottom: -16px;
+}
+
+.FlowBlock-closed {
+    background-image: url(./img/flow-top-closed.png),url(./img/flow-bottom-closed.png),url(./img/flow-bg.png);
+    margin-bottom: 16px;
+}
+
+.dragging {
+    opacity: 0.5;
+}
+
+.SnapPoint {
+    background: url(./img/highlight.png) no-repeat;
+    position: absolute;
+    height: 19px;
+    width: 100%;
+}
