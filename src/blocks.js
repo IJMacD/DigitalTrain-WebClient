@@ -1,4 +1,4 @@
-export default async function execute (blocks, context={}) {
+export default async function execute (blocks, context={}, notify=null) {
 
     const startBlock = blocks.find(b => b.type === "once");
     const loopBlock = blocks.find(b => b.type === "forever");
@@ -16,7 +16,9 @@ export default async function execute (blocks, context={}) {
 
     async function runBlocks (blocks) {
         for (const block of blocks) {
+            if (notify instanceof Function) notify(block.id);
             await runBlock(block);
+            if (notify instanceof Function) notify(null);
         }
     }
 

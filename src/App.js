@@ -14,7 +14,9 @@ export default () => {
   const [ command, setCommand ] = React.useState("");
   const [ brightness, setBrightness ] = React.useState(1000);
   const [ blocks, setBlocks ] = useSavedState(SAVE_KEY, [ { id: "setup", type: "once" }, { id:"loop", type: "forever" } ]);
+  const [ running, setRunning ] = React.useState(false);
   const context = React.useRef({ running: false, getRunner });
+  const [ activeBlock, setActiveBlock ] = React.useState(null);
   
   async function fetchStatus () {
     const r = await fetch(API_ROOT + "/status");
@@ -117,6 +119,10 @@ export default () => {
     return () => document.removeEventListener("keypress", listener);
   }, [devices, freq]);
 
+  React.useEffect(() => {
+    context.current.running = running;
+  }, [running]);
+
   function updateBlock (block, newBlock) {
     // Not immutable
     Object.assign(block, newBlock);
@@ -153,9 +159,13 @@ export default () => {
         <input value={command} onChange={e => setCommand(e.target.value)} style={{width:300}} />
         <button>Send</button>
       </form>
-      <button onClick={() => { context.current.running = true; execute(blocks, context.current); }}>Run</button>
-      <button onClick={() => context.current.running = false }>Stop</button>
-      <Diagram blocks={blocks} setBlocks={setBlocks} makeBlock={makeBlock} />
+      {
+        running ?
+          <button onClick={() => setRunning(false) }>Stop</button>
+        :
+          <button onClick={() => { setRunning(true); execute(blocks, context.current, setActiveBlock); }}>Run</button>
+      }
+      <Diagram blocks={blocks} setBlocks={setBlocks} makeBlock={makeBlock} activeBlock={activeBlock} />
     </>
   );
 };
@@ -246,7 +256,7 @@ function throttle (fn, t) {
     throttling = true;
     setTimeout(() => throttling = false, t);
   }
-  }
+}
 
 // My own dodgy throttle implementation
 function useThrottle (fn, t) {

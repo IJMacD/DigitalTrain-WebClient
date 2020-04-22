@@ -2,7 +2,9 @@ import React from 'react';
 import Canvas from './Canvas';
 import factory from './factory';
 
-export default function Diagram ({ blocks, setBlocks, makeBlock=b => null }) {
+import './Diagram.css';
+
+export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activeBlock=null }) {
     const [ hoverID, setHoverID ] = React.useState(null);
     const [ snapType, setSnapType ] = React.useState(null);
     const [ draggingID, setDraggingID ] = React.useState(null);
@@ -92,8 +94,14 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null }) {
 
     }
 
+    function updateBlock (block, newBlock) {
+      // Not immutable
+      Object.assign(block, newBlock);
+      setBlocks(blocks);
+    }
+
     function createElement (block) {
-        return makeBlock(block) || factory(block);;
+        return makeBlock(block) || factory(block, updateBlock);
     }
     
     /**
@@ -120,6 +128,7 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null }) {
                 highlight: block.id === hoverID,
                 highlightSnap: snapType,
                 dragging: block.id === draggingID,
+                active: block.id === activeBlock,
             };
             
             return React.cloneElement(blockElement, props, block.children && block.children.map(inflateBlock));
@@ -129,7 +138,7 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null }) {
     }
 
     return (
-        <div>
+        <div className="Blocks-Diagram">
             <Canvas
                 onSplit={onSplit}
                 setPosition={setPosition}
@@ -139,6 +148,8 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null }) {
                 getBlock={id => findBlock(blocks, id)}
                 commitSnap={commitSnap}
                 createElement={createElement}
+                height={1000}
+                width={1000}
             >
             {
                 blocks.map(inflateBlock)

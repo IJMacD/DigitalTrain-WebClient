@@ -29,7 +29,7 @@ import StatementBlock from './StatementBlock';
   * @param {Block} block 
   * @returns {React.ReactElement}
   */
- export default function factory (block) {
+ export default function factory (block, updateBlock) {
     // const BLOCK_MAP = {
     //     forever: FlowBlock,
     //     once: FlowBlock,
@@ -83,9 +83,17 @@ import StatementBlock from './StatementBlock';
     }
 
     if (block.type === "sleep") {
-        return <StatementBlock 
-                content={<div>Sleep ({block.value})</div>}
-                snapPoints={[{ type: "append", bottom: 0 }]}
-        />;
+        return <SleepBlock block={block} updateBlock={updateBlock} snapPoints={[{ type: "append", bottom: 0 }]} />;
     }
+}
+
+function SleepBlock ({ block, updateBlock, ...restProps }) {
+    const [ value, setValue ] = React.useState(block.value)
+    return (
+        <StatementBlock 
+            block={block}
+            { ...restProps }
+            content={<div>Sleep <input type="number" value={value} onChange={e => setValue(e.target.value)} onBlur={() => updateBlock(block, { value })} /></div>}
+        />
+    );
 }

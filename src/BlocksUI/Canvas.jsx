@@ -2,6 +2,8 @@ import React from 'react';
 
 export default function Canvas ({ 
     children=null,
+    height,
+    width,
     onSplit,
     setDraggingBlock,
     setPosition,
@@ -124,7 +126,8 @@ export default function Canvas ({
             style={{
                 background: "#333",
                 padding: 30,
-                height: 600,
+                height,
+                width,
                 position: "relative",
                 touchAction: "none",
                 overflow: "hidden",
