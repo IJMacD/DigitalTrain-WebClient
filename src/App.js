@@ -198,18 +198,65 @@ function LocoSetContent ({ block, devices, updateBlock }) {
   );
 }
 
-function useSavedState (key, initialState) {
-  const saved = localStorage.getItem(key);
-  if (saved) {
+function useSavedState(key, initialValue) {
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = React.useState(() => {
     try {
-      initialState = JSON.parse(saved);
-    } catch (e) {}
+      // Get from local storage by key
+      const item = window.localStorage.getItem(key);
+      // Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      // If error also return initialValue
+      console.log(error);
+      return initialValue;
+    }
+  });
+
+  // Return a wrapped version of useState's setter function that ...
+  // ... persists the new value to localStorage.
+  const setValue = value => {
+    try {
+      // Allow value to be a function so we have same API as useState
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+      // Save state
+      setStoredValue(valueToStore);
+      // Save to local storage
+      throttle(() => {
+        const t = performance.now();
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        console.log("Saving took " + (performance.now() - t) + " ms");
+      }, 10000);
+    } catch (error) {
+      // A more advanced implementation would handle the error case
+      console.log(error);
+    }
+  };
+
+  return [storedValue, setValue];
+}
+
+// My own dodgy throttle implementation
+let throttling = false;
+function throttle (fn, t) {
+  if (!throttling) {
+    fn();
+    throttling = true;
+    setTimeout(() => throttling = false, t);
+  }
   }
 
-  const [ state, setState ] = React.useState(initialState);
+// My own dodgy throttle implementation
+function useThrottle (fn, t) {
+  const ref = React.useRef(false);
 
-  return [ state, newState => {
-    localStorage.setItem(key, JSON.stringify(newState));
-    setState(newState);
-  }];
+  return function run (...args) {
+    if (!ref.current) {
+      fn(...args);
+      ref.current = true;
+      setTimeout(() => ref.current = false, t);
+    }
+  }
 }
