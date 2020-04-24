@@ -15,8 +15,8 @@ export default () => {
   const [ brightness, setBrightness ] = React.useState(1000);
   const [ blocks, setBlocks ] = useSavedState(SAVE_KEY, [ { id: "setup", type: "once" }, { id:"loop", type: "forever" } ]);
   const [ running, setRunning ] = React.useState(false);
-  const context = React.useRef({ running: false, getRunner });
   const [ activeBlock, setActiveBlock ] = React.useState(null);
+  const context = React.useRef({ running: false, devices, getRunner, setActiveBlock });
   
   async function fetchStatus () {
     const r = await fetch(API_ROOT + "/status");
@@ -37,17 +37,6 @@ export default () => {
 
   function stopDevice (deviceName) {
     sendDeviceProp(deviceName, "stop", "stop");
-  }
-
-  async function sendDeviceProp (deviceName, prop, value) {
-      const body = new URLSearchParams();
-      body.set("name", deviceName);
-      body.set(prop, value);
-      await fetch (API_ROOT + "/update", {
-          method: "post",
-          body,
-      });
-      fetchStatus();
   }
 
   function allStop () {
@@ -121,18 +110,17 @@ export default () => {
 
   React.useEffect(() => {
     context.current.running = running;
+    context.current.devices = devices;
+  }, [running, devices]);
+
+  React.useEffect(() => {
+    running && execute(blocks, context.current);
   }, [running]);
 
   function updateBlock (block, newBlock) {
     // Not immutable
     Object.assign(block, newBlock);
     setBlocks(blocks);
-  }
-
-  function getRunner (block) {
-    if (block.type === "loco-set") {
-      return block => sendDeviceProp(block.device, block.prop, block.value);
-    }
   }
 
   /**
@@ -163,12 +151,28 @@ export default () => {
         running ?
           <button onClick={() => setRunning(false) }>Stop</button>
         :
-          <button onClick={() => { setRunning(true); execute(blocks, context.current, setActiveBlock); }}>Run</button>
+          <button onClick={() => setRunning(true) }>Run</button>
       }
       <Diagram blocks={blocks} setBlocks={setBlocks} makeBlock={makeBlock} activeBlock={activeBlock} />
     </>
   );
 };
+
+async function sendDeviceProp (deviceName, prop, value) {
+    const body = new URLSearchParams();
+    body.set("name", deviceName);
+    body.set(prop, value);
+    await fetch (API_ROOT + "/update", {
+        method: "post",
+        body,
+    });
+}
+
+function getRunner (block) {
+  if (block.type === "loco-set") {
+    return block => sendDeviceProp(block.device, block.prop, block.value);
+  }
+}
 
 function Devices ({ devices, setSpeed, setLight }) {
   return (
@@ -238,7 +242,7 @@ function useSavedState(key, initialValue) {
         const t = performance.now();
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
         console.log("Saving took " + (performance.now() - t) + " ms");
-      }, 10000);
+      }, 1000);
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error);

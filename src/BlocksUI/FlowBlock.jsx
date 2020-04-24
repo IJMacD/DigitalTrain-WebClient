@@ -3,7 +3,7 @@ import './FlowBlock.css';
 
 export default function FlowBlock ({
     block,
-    label=null,
+    content=null,
     snapPoints=null,
     children=null,
     topLevel=false,
@@ -33,7 +33,7 @@ export default function FlowBlock ({
             data-block-id={block.id}
         >
             <div style={{ position: "absolute", top: 20, left: 20 }}>
-                {label}
+                {content}
             </div>
             { children }
             { highlightElement }

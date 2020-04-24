@@ -1,8 +1,13 @@
 .Blocks-Diagram {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.Blocks-Diagram-Scroller {
     overflow: auto;
 }
 
-.Blocks-Diagram input, 
+.Blocks-Diagram input,
 .Blocks-Diagram select {
     border-radius: 10px;
     border: 1px solid #00000040;
@@ -10,4 +15,20 @@
     margin: 4px;
     flex: 0 1 100px;
     min-width: 100px;
+}
+
+.Diagram-Bin {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: 20px;
+}
+
+.Diagram-Bin-hover {
+    background-color: yellow;
+}
+
+.Diagram-Toolbox {
+    padding: 10px
 }

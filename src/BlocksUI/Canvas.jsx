@@ -83,32 +83,38 @@ export default function Canvas ({
 
             if (canSnap) {
                 const els = document.elementsFromPoint(currX, currY);
-                const underBlockEl = els.filter(el => el.dataset.blockId !== dragging.id).find(el => el.dataset.blockId);
-                if (underBlockEl instanceof HTMLElement) {
-                    const underID = underBlockEl.dataset.blockId;
-                    const targetBlock = getBlock(underID);
-                    const tEl = createElement(targetBlock);
-                    const snapPoints = resolveSnapPoints(underBlockEl, tEl.props.snapPoints);
-                    if (!snapPoints || snapPoints.length === 0) {
-                        setHover(null);
-                    }
-                    else if (snapPoints.length === 1) {
-                        setHover(underID);
-                        setSnapType(snapPoints[0].type);
-                    } else {
-                        let minVal = Number.MAX_VALUE;
-                        let snapType = null;
-                        snapPoints.forEach(p => {
-                            const d = Math.abs(p.y - currY);
-                            if (d < minVal) {
-                                snapType = p.type;
-                                minVal = d;
-                            }
-                        });
-                        setHover(underID);
-                        setSnapType(snapType);
-                    }
-                } else setHover(null);
+
+                if (els.some(el => el.classList.contains("Diagram-Bin"))) {
+                    setHover("BIN");
+                }
+                else {
+                    const underBlockEl = els.filter(el => el.dataset.blockId !== dragging.id).find(el => el.dataset.blockId);
+                    if (underBlockEl instanceof HTMLElement) {
+                        const underID = underBlockEl.dataset.blockId;
+                        const targetBlock = getBlock(underID);
+                        const tEl = createElement(targetBlock);
+                        const snapPoints = resolveSnapPoints(underBlockEl, tEl.props.snapPoints);
+                        if (!snapPoints || snapPoints.length === 0) {
+                            setHover(null);
+                        }
+                        else if (snapPoints.length === 1) {
+                            setHover(underID);
+                            setSnapType(snapPoints[0].type);
+                        } else {
+                            let minVal = Number.MAX_VALUE;
+                            let snapType = null;
+                            snapPoints.forEach(p => {
+                                const d = Math.abs(p.y - currY);
+                                if (d < minVal) {
+                                    snapType = p.type;
+                                    minVal = d;
+                                }
+                            });
+                            setHover(underID);
+                            setSnapType(snapType);
+                        }
+                    } else setHover(null);
+                }
             }
             else setHover(null);
         }

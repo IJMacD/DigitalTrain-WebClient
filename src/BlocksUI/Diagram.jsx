@@ -37,6 +37,13 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
 
     function commitSnap () {
         if (hoverID) {
+            if (hoverID === "BIN") {
+                const dummyHead = checkDummyHead(blocks, draggingID);
+                // deleteBlock(setBlocks, blocks, dummyHead);
+                setBlocks(blocks.filter(b => b !== dummyHead));
+                return;
+            }
+
             if (hoverID === draggingID) {
                 console.error(`Trying to snap ${hoverID} to itself`);
                 return;
@@ -72,13 +79,17 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
     }
 
     function addBlock (block) {
-        if (typeof block !== "string") {
+        if (typeof block.id !== "string") {
             block.id = generateID();
         }
 
         const el = createElement(block);
 
-        if (el.topLevel) {
+        if (!el) {
+            throw Error("Couldn't create element for block type " + block.type);
+        }
+
+        if (el.props.topLevel) {
             setBlocks([
                 ...blocks,
                 block
@@ -100,6 +111,11 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
       setBlocks(blocks);
     }
 
+    /**
+     * 
+     * @param {Block} block 
+     * @returns {React.ReactElement}
+     */
     function createElement (block) {
         return makeBlock(block) || factory(block, updateBlock);
     }
@@ -124,7 +140,8 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
         if (blockElement)  {
             const props = {
                 key: block.id,
-                block: block,
+                block,
+                updateBlock,
                 highlight: block.id === hoverID,
                 highlightSnap: snapType,
                 dragging: block.id === draggingID,
@@ -139,24 +156,32 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
 
     return (
         <div className="Blocks-Diagram">
-            <Canvas
-                onSplit={onSplit}
-                setPosition={setPosition}
-                setHover={setHoverID}
-                setSnapType={setSnapType}
-                setDraggingBlock={setDraggingID}
-                getBlock={id => findBlock(blocks, id)}
-                commitSnap={commitSnap}
-                createElement={createElement}
-                height={1000}
-                width={1000}
-            >
-            {
-                blocks.map(inflateBlock)
-            }
-            </Canvas>
-            <button onClick={() => addBlock({ type: "sleep", value: 1000 })}>Add Sleep</button>
-            <button onClick={() => addBlock({ type: "loco-set" })}>Add Loco Set</button>
+            <div className="Blocks-Diagram-Scroller">
+                <Canvas
+                    onSplit={onSplit}
+                    setPosition={setPosition}
+                    setHover={setHoverID}
+                    setSnapType={setSnapType}
+                    setDraggingBlock={setDraggingID}
+                    getBlock={id => findBlock(blocks, id)}
+                    commitSnap={commitSnap}
+                    createElement={createElement}
+                    height={2000}
+                    width={2000}
+                >                
+                <div className={`Diagram-Bin ${hoverID==="BIN"?"Diagram-Bin-hover":""}`} />
+                {
+                    blocks.map(inflateBlock)
+                }
+                </Canvas>
+            </div>
+            <div className="Diagram-Toolbox">
+                <button onClick={() => addBlock({ type: "sleep", value: 1000 })}>Add Sleep</button>
+                <button onClick={() => addBlock({ type: "loco-set" })}>Add Loco Set</button>
+                <button onClick={() => addBlock({ type: "wait" })}>Add Wait</button>
+                <button onClick={() => addBlock({ type: "loop" })}>Add Loop</button>
+                <button onClick={() => addBlock({ type: "if" })}>Add If</button>
+            </div>
         </div>
     );
 }
@@ -273,12 +298,12 @@ function deleteBlock (setBlocks, blocks, id) {
 }
 
 
-let LATEST_ID = 1;
 function createDummy (x, y) {
     return {
-        id: `DUMMY_${LATEST_ID++}`,
+        id: generateID(),
         type: "dummy",
         position: { x, y },
+        children: [],
     };
 }
 

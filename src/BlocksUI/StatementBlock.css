@@ -1,11 +1,11 @@
 .StatementBlock {
     background: 
-        url(./img/action-tr.png) no-repeat 100% 0,
-        url(./img/action-br.png) no-repeat 100% 100%,
-        url(./img/action-tl.png) no-repeat 0 0,
-        url(./img/action-bl.png) no-repeat 0 100%,
-        url(./img/action-l.png) repeat-y 0 0,
-        url(./img/action-r.png) repeat-y 100% 0,
+        url(./img/blue-tr.png) no-repeat 100% 0,
+        url(./img/blue-br.png) no-repeat 100% 100%,
+        url(./img/blue-tl.png) no-repeat 0 0,
+        url(./img/blue-bl.png) no-repeat 0 100%,
+        url(./img/blue-l.png) repeat-y 0 0,
+        url(./img/blue-r.png) repeat-y 100% 0,
         #4c97ff;
     background-clip: border-box, border-box, border-box, border-box, content-box, content-box, content-box;
     /* border: "2px solid #3971bf", */
@@ -19,20 +19,9 @@
     margin-bottom: -16px;
 }
 
-.StatementBlock-red {
-    background-image: 
-        url(./img/output-tr.png),
-        url(./img/output-br.png),
-        url(./img/output-tl.png),
-        url(./img/output-bl.png),
-        url(./img/output-l.png),
-        url(./img/output-r.png),
-        none;
-}
-
 .StatementBlock::before {
     content: "";
-    background: url(./img/action-t.png) no-repeat, url(./img/action-b.png) no-repeat;
+    background: url(./img/blue-t.png) repeat-x, url(./img/blue-b.png) repeat-x;
     background-position: 0 0, 0 100%;
     position: absolute;
     top: 0;
@@ -41,8 +30,36 @@
     right: 8px;
 }
 
-.StatementBlock-red::before {
-    background: url(./img/output-t.png) repeat-x, url(./img/output-b.png) repeat-x;
+.StatementBlock.red {
+    background-image: 
+        url(./img/red-tr.png),
+        url(./img/red-br.png),
+        url(./img/red-tl.png),
+        url(./img/red-bl.png),
+        url(./img/red-l.png),
+        url(./img/red-r.png),
+        none;
+    background-color: #f55d3e;
+}
+
+.StatementBlock.red::before {
+    background-image: url(./img/red-t.png), url(./img/red-b.png);
+}
+
+.StatementBlock.green {
+    background-image: 
+        url(./img/green-tr.png),
+        url(./img/green-br.png),
+        url(./img/green-tl.png),
+        url(./img/green-bl.png),
+        url(./img/green-l.png),
+        url(./img/green-r.png),
+        none;
+    background-color: #40bf4a;
+}
+
+.StatementBlock.green::before {
+    background-image: url(./img/green-t.png), url(./img/green-b.png);
 }
 
 .StatementBlock.highlight::after {
