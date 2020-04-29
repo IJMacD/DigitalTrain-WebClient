@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "js-file-download": "^0.4.11",
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },

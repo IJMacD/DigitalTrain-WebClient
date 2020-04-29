@@ -2,6 +2,7 @@ import React from "react";
 import Diagram from './BlocksUI/Diagram';
 import execute from "./blocks";
 import StatementBlock from "./BlocksUI/StatementBlock";
+import fileDownload from 'js-file-download';
 
 const API_ROOT = `http://rail_master:8080`;
 
@@ -134,6 +135,24 @@ export default () => {
     }
   }
 
+  /**
+   * 
+   * @param {import("react").ChangeEvent<HTMLInputElement>} e 
+   */
+  function handleImport (e) {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", f => {
+      try {
+        const blocks = JSON.parse(String(f.target.result));
+        setBlocks(blocks);
+      } catch (ex) {
+        console.log("Error parsing imported file " + e.target.files[0].name);
+      }
+    });
+    fileReader.readAsText(e.target.files[0]);
+    e.target.value = "";
+  }
+
   return (
     <>
       <button className="stop-btn" onClick={allStop}>STOP</button>
@@ -153,6 +172,8 @@ export default () => {
         :
           <button onClick={() => setRunning(true) }>Run</button>
       }
+      <button onClick={() => fileDownload(JSON.stringify(blocks), `DigitalTrain-Blocks-${new Date().toISOString()}.json`)}>Export</button>
+      <label>Import: <input type="file" onChange={handleImport} /></label>
       <Diagram blocks={blocks} setBlocks={setBlocks} makeBlock={makeBlock} activeBlock={activeBlock} />
     </>
   );
