@@ -10,29 +10,40 @@ export default function Diagram ({ blocks, setBlocks, makeBlock=b => null, activ
     const [ draggingID, setDraggingID ] = React.useState(null);
 
     function onSplit (id, x, y) {
-        const dummyHead = checkDummyHead(blocks, id);
-        if (dummyHead) return dummyHead;
-        
-        const [ newBlocks, list ] = extractBlocks(blocks, id);
-        
-        const dummyBlock = createDummy(x, y);
-        dummyBlock.children = list;
+        let dummyBlock;
 
-        setBlocks([
-            ...newBlocks,
-            dummyBlock
-        ]);
+        setBlocks(blocks => {
+            const dummyHead = checkDummyHead(blocks, id);
+            if (dummyHead) {
+                dummyBlock = dummyHead;
+                return blocks;
+            }
+            
+            const [ newBlocks, list ] = extractBlocks(blocks, id);
+            
+            dummyBlock = createDummy(x, y);
+            dummyBlock.children = list;
+
+            return [
+                ...newBlocks,
+                dummyBlock
+            ];
+        });
 
         return dummyBlock;
     }
 
     function setPosition (id, newPosition) {
-        const block = blocks.find(block => block.id === id);
-        if (block) {
-            const newBlock = { ...block, position: newPosition };
-            const newBlocks = [ ...blocks.filter(block => block.id !== id), newBlock ];
-            setBlocks(newBlocks);
-        }
+        setBlocks(blocks => {
+            const block = blocks.find(block => block.id === id);
+            if (block) {
+                const newBlock = { ...block, position: newPosition };
+                const newBlocks = [ ...blocks.filter(block => block.id !== id), newBlock ];
+                return newBlocks;
+            } 
+            console.log("Couldn't find block " + id + " to set position");
+            return blocks;
+        });
     }
 
     function commitSnap () {
