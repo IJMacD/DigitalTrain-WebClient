@@ -55,3 +55,14 @@ body {
 .AppBlock-LocoSet-content label span {
     flex: 1;
 }
+
+.App-pagelink {
+    border: 1px solid rgba(0,0,0,0.2);
+    font-weight: bold;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.App-pagelink:hover {
+    background-color: rgba(255,255,0,0.2);
+}

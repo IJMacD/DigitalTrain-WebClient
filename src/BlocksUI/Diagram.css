@@ -1,6 +1,6 @@
 .Blocks-Diagram {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
 }
 
 .Blocks-Diagram-Scroller {

@@ -124,7 +124,7 @@ function parseCondition (str) {
    * @returns {boolean}
    */
   function executeCondition (node, context) {
-    const d = context.devices.find(d => d.name === node.children[0].device);
+    const d = context.devices.find(d => d.id === node.children[0].device);
     if (!d) throw Error("Couldn't find device " + node.children[0].device);
     const dv = +d[node.children[0].property];
     const v = +node.children[1].value;
