@@ -3,40 +3,28 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html",
-    "prebuild": "rimraf dist",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "deploy": "deploy.bat"
   },
   "license": "MIT",
   "dependencies": {
     "js-file-download": "^0.4.11",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "^4.0.3"
   },
-  "devDependencies": {
-    "@babel/core": "^7.8.7",
-    "babel-preset-nano-react-app": "^0.1.0",
-    "parcel-bundler": "^1.12.4",
-    "rimraf": "^3.0.2"
-  },
-  "babel": {
-    "presets": [
-      "nano-react-app"
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
     ],
-    "plugins": [
-      [
-        "@babel/plugin-proposal-class-properties",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "@babel/plugin-transform-react-jsx",
-        {
-          "pragmaFrag": "React.Fragment"
-        }
-      ]
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   }
 }
